@@ -53,7 +53,7 @@ class debugger():
             print("[*] Error: 0x%08x." % kernel32.GetLastError())
 
     def open_process(self, pid):
-        h_process = kernel32.OpenProcess(PROCESS_ALL_ACCESS, pid, False)
+        h_process = kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, pid)
         return h_process
 
     def attach(self, pid):
@@ -64,7 +64,6 @@ class debugger():
         if kernel32.DebugActiveProcess(pid):
             self.debugger_active = True
             self.pid = int(pid)
-            self.run()
         else:
             print("[*] Unable to attach to the process.")
             print("[*] Error: 0x%08x." % kernel32.GetLastError())
@@ -124,12 +123,13 @@ class debugger():
         else:
             return False
 
-    def get_thread_context(self, thread_id):
-        context = CONTEXT64
+    def get_thread_context(self, thread_id=None, h_thread=None):
+        context = CONTEXT64()
         context.ContextFlags = CONTEXT_FULL | CONTEXT_DEBUG_REGISTERS
 
         # Get handle to the thread
-        h_thread = self.open_thread(thread_id)
+        if not h_thread:
+            h_thread = self.open_thread(thread_id)
         if kernel32.GetThreadContext(h_thread, byref(context)):
             kernel32.CloseHandle(h_thread)
             return context
