@@ -1,4 +1,5 @@
 import my_debugger
+from my_debugger_defines import *
 import os.path
 
 debugger = my_debugger.debugger()
@@ -28,8 +29,9 @@ printf_address = debugger.func_resolve("msvcrt.dll".encode('ascii'), "printf".en
 
 print("[*] Address of printf: 0x%08x" % printf_address)
 
-debugger.bp_set(printf_address)
+# debugger.bp_set(printf_address)
+debugger.bp_set_hw(printf_address, 1, HW_EXECUTE)
 
 debugger.run()
 
-debugger.detach()
+#debugger.detach()
