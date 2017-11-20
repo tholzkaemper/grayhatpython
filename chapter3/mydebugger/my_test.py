@@ -24,6 +24,12 @@ debugger.attach(int(pid))
 #     print("[**] RDX: 0x%08x" % thread_context.Rdx)
 # print("[*] END DUMP")
 
+printf_address = debugger.func_resolve("msvcrt.dll".encode('ascii'), "printf".encode('ascii'))
+
+print("[*] Address of printf: 0x%08x" % printf_address)
+
+debugger.bp_set(printf_address)
+
 debugger.run()
 
 debugger.detach()
